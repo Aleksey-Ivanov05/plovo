@@ -1,45 +1,37 @@
 import React, {useState} from 'react';
-import CartItem from "./CartItem";
-import {CartDish} from "../../types";
+import {useNavigate} from "react-router-dom";
 import Modal from "../Modal/Modal";
+import {CartDish} from "../../types";
+import CartDishes from "./CartDishes";
 
 interface Props {
   cartDishes: CartDish[];
 }
 
 const Cart: React.FC<Props> = ({cartDishes}) => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
-  const total = cartDishes.reduce((acc, cartDish) => {
-    return acc + cartDish.amount * cartDish.dish.price;
-  }, 0);
-
   let cart = (
-    <div className="alert alert-primary">Cart is empty! Add something!</div>
-  )
+    <div className="alert alert-primary">
+      Cart is empty! Add something!
+    </div>
+  );
+  const cancel = () => setShowModal(prev => !prev);
 
   if (cartDishes.length > 0) {
     cart = (
       <>
-        {cartDishes.map(cartDish => (
-          <CartItem key={cartDish.dish.id} cartDish={cartDish}/>
-        ))}
-        <div className="card border-0 p-2">
-          <div className="row">
-            <div className="col text-right">
-              Total:
-            </div>
-            <div className="col-3 text-right">
-              <strong>{total}</strong>KGZ
-            </div>
-          </div>
-        </div>
-        <button className="w-100 btn btn-primary" onClick={() => setShowModal(true)}>Order</button>
+        <CartDishes cartDishes={cartDishes}/>
+        <button
+          className="w-100 btn btn-primary"
+          onClick={cancel}
+        >
+          Order
+        </button>
       </>
-    )
+    );
   }
-
-  const cancel = () => setShowModal(false);
 
   return (
     <>
@@ -47,10 +39,21 @@ const Cart: React.FC<Props> = ({cartDishes}) => {
       {cart}
       <Modal show={showModal} title="Order" onClose={cancel}>
         <div className="modal-body">
-          Content
+          <p>Do you want to continue to checkout?</p>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-danger" onClick={cancel}>Cancel</button>
+          <button
+            className="btn btn-danger"
+            onClick={cancel}
+          >
+            Cancel
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('/checkout')}
+          >
+            Continue
+          </button>
         </div>
       </Modal>
     </>

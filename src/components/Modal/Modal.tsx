@@ -7,11 +7,15 @@ interface Props extends React.PropsWithChildren {
   onClose: React.MouseEventHandler;
 }
 
-const Modal: React.FC<Props> = ({show, title , onClose, children}) => {
+const Modal: React.FC<Props> = ({show, title, onClose, children}) => {
   return (
     <>
       <Backdrop show={show}/>
-      <div className="modal show" style={{display: show ? 'block' : 'none'}} onClick={onClose}>
+      <div
+        className="modal show"
+        style={{display: show ? 'block' : 'none'}}
+        onClick={onClose}
+      >
         <div className="modal-dialog" onClick={e => e.stopPropagation()}>
           <div className="modal-content">
             <div className="modal-header">
@@ -22,7 +26,6 @@ const Modal: React.FC<Props> = ({show, title , onClose, children}) => {
         </div>
       </div>
     </>
-
   );
 };
 

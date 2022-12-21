@@ -6,14 +6,16 @@ interface Props {
 }
 
 const CartItem: React.FC<Props> = ({cartDish}) => {
-  const price = cartDish.dish.price * cartDish.amount;
+  const price = cartDish.amount * cartDish.dish.price;
 
   return (
     <div className="card mb-2 p-2">
       <div className="row align-items-center">
         <div className="col">{cartDish.dish.name}</div>
         <div className="col-2">x{cartDish.amount}</div>
-        <div className="text-right col-3">{price} KGZ</div>
+        <div className="col-3 text-right">
+          {price} KGS
+        </div>
       </div>
     </div>
   );

@@ -1,17 +1,27 @@
 import React, {useState} from 'react';
-import {Dish, DishMutation} from "../../types";
+import {ApiDish, DishMutation} from "../../types";
+import ButtonSpinner from "../Spinner/ButtonSpinner";
 
 interface Props {
-  onSubmit: (dish: Dish) => void;
+  onSubmit: (dish: ApiDish) => void;
+  existingDish?: DishMutation;
+  isEdit?: boolean;
+  isLoading?: boolean;
 }
 
-const DishForm: React.FC<Props> = ({onSubmit}) => {
-  const [dish, setDish] = useState<DishMutation>({
-    name: '',
-    description: '',
-    image: '',
-    price: '',
-  });
+const initialState: DishMutation = {
+  name: '',
+  description: '',
+  image: '',
+  price: '',
+};
+
+const DishForm: React.FC<Props> = ({
+ onSubmit,
+ existingDish= initialState,
+ isEdit= false, isLoading = false
+}) => {
+  const [dish, setDish] = useState<DishMutation>(existingDish);
 
   const onDishChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const {name, value} = e.target;
@@ -22,32 +32,51 @@ const DishForm: React.FC<Props> = ({onSubmit}) => {
   const onFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      id: Math.random().toString(),
       ...dish,
       price: parseFloat(dish.price),
-    })
-  }
+    });
+  };
 
   return (
     <form onSubmit={onFormSubmit}>
-      <h4>Add new dish</h4>
+      <h4>{isEdit ? 'Edit dish' : 'Add new dish'} </h4>
       <div className="form-group">
         <label htmlFor="name">Name</label>
-        <input id="name" name="name" type="text" className="form-control" value={dish.name} onChange={onDishChange}/>
+        <input
+          id="name" name="name" type="text"
+          className="form-control"
+          value={dish.name}
+          onChange={onDishChange}
+        />
       </div>
       <div className="form-group">
         <label htmlFor="description">Description</label>
-        <textarea id="description" name="description" className="form-control" value={dish.description} onChange={onDishChange}/>
+        <textarea
+          id="description" name="description"
+          className="form-control"
+          value={dish.description}
+          onChange={onDishChange}
+        />
       </div>
       <div className="form-group">
         <label htmlFor="image">Image</label>
-        <input id="image" name="image" type="url" className="form-control" value={dish.image} onChange={onDishChange}/>
+        <input
+          id="image" name="image" type="url"
+          className="form-control"
+          value={dish.image}
+          onChange={onDishChange}
+        />
       </div>
       <div className="form-group mb-2">
         <label htmlFor="price">Price</label>
-        <input id="price" name="price" type="number" className="form-control" value={dish.price} onChange={onDishChange}/>
+        <input
+          id="price" name="price" type="number"
+          className="form-control"
+          value={dish.price}
+          onChange={onDishChange}
+        />
       </div>
-      <button type="submit" className="btn btn-primary">Create</button>
+      <button type="submit" disabled={isLoading} className="btn btn-primary">{isLoading && <ButtonSpinner/>}{isEdit ? 'Update' : 'Create'}</button>
     </form>
   );
 };
