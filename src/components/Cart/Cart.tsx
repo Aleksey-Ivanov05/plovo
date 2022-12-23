@@ -1,15 +1,13 @@
 import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import Modal from "../Modal/Modal";
-import {CartDish} from "../../types";
 import CartDishes from "./CartDishes";
+import {useAppSelector} from "../../app/hooks";
+import {selectCartDishes} from "../../store/cartSlice";
 
-interface Props {
-  cartDishes: CartDish[];
-}
-
-const Cart: React.FC<Props> = ({cartDishes}) => {
+const Cart: React.FC = () => {
   const navigate = useNavigate();
+  const cartDishes = useAppSelector(selectCartDishes);
   const [showModal, setShowModal] = useState(false);
 
   let cart = (

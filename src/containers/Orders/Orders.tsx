@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {ApiOrdersList, Order} from "../../types";
 import axiosApi from "../../axiosApi";
-import cartDishes from "../../components/Cart/CartDishes";
 import Spinner from "../../components/Spinner/Spinner";
 
 const Orders = () => {

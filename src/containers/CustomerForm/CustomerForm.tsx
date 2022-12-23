@@ -1,15 +1,13 @@
 import React, {useState} from 'react';
-import {CartDish, Customer, ApiOrder} from "../../types";
+import {ApiOrder, Customer} from "../../types";
 import axiosApi from "../../axiosApi";
 import {useNavigate} from "react-router-dom";
 import Spinner from "../../components/Spinner/Spinner";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {resetCart, selectCartDishes} from "../../store/cartSlice";
 
-interface Props {
-  cartDishes: CartDish[];
-  clearCart: () => void;
-}
-
-const CustomerForm: React.FC<Props> = ({cartDishes, clearCart}) => {
+const CustomerForm: React.FC= () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [customer, setCustomer] = useState<Customer>({
     name: '',
@@ -17,7 +15,7 @@ const CustomerForm: React.FC<Props> = ({cartDishes, clearCart}) => {
     phone: '',
   });
   const [loading, setLoading] = useState(false);
-
+  const cartDishes = useAppSelector(selectCartDishes);
   const customerChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target;
 
@@ -38,7 +36,7 @@ const CustomerForm: React.FC<Props> = ({cartDishes, clearCart}) => {
 
     try {
       await axiosApi.post('/orders.json', order);
-      clearCart();
+      dispatch(resetCart());
       navigate('/');
     } finally {
       setLoading(false);
