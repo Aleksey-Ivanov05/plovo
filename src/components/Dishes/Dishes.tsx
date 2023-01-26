@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import DishItem from "./DishItem";
-import {Dish} from "../../types";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {selectDishDeleteLoading, selectDishes, selectDishesFetchLoading} from "../../store/dishesSlice";
 import {deleteDish, fetchDishes} from "../../store/dishesThunks";

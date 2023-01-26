@@ -1,5 +1,5 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {ApiDishesList, Dish} from "../types";
+import {ApiDish, ApiDishesList, Dish} from "../types";
 import axiosApi from "../axiosApi";
 import {AppDispatch} from "../app/store";
 import {updateDishes} from "./cartSlice";
@@ -33,3 +33,36 @@ export const deleteDish = createAsyncThunk<void, string>(
     await axiosApi.delete('/dishes/' + dishId + '.json');
   }
 );
+
+export const createDish = createAsyncThunk<void, ApiDish>(
+  'dishes/create',
+  async (apiDish) => {
+    await axiosApi.post('/dishes.json', apiDish);
+  }
+);
+
+export const fetchDish = createAsyncThunk<ApiDish, string>(
+  'dishes/fetchOne',
+  async (id) => {
+    const response = await axiosApi.get('/dishes/' + id + '.json');
+    const dish = response.data;
+
+    if (dish === null) {
+      throw new Error('Not Found!');
+    }
+
+    return dish;
+  }
+)
+
+interface UpdateDishParams {
+  id: string;
+  dish: ApiDish;
+}
+
+export const updateDish = createAsyncThunk<void, UpdateDishParams>(
+  'dishes/update',
+  async (params) => {
+    await axiosApi.put('/dishes/' + params.id + '.json', params.dish)
+  }
+)

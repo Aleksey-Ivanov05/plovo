@@ -3,30 +3,26 @@ import {useNavigate, useParams} from "react-router-dom";
 import {ApiDish} from "../../types";
 import axiosApi from "../../axiosApi";
 import DishForm from "../../components/DishForm/DishForm";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {selectDishUpdateLoading, selectOneDish, selectOneDishFetchLoading} from "../../store/dishesSlice";
+import {fetchDish, updateDish} from "../../store/dishesThunks";
+import Spinner from "../../components/Spinner/Spinner";
 
 const EditDish = () => {
-  const {id} = useParams();
+  const {id} = useParams() as {id: string};
   const navigate = useNavigate();
-  const [dish, setDish] = useState<ApiDish | null>(null);
-  const [updating, setUpdating] = useState(false);
-
-  const fetchOneDish = useCallback(async () => {
-    const dishResponse = await axiosApi.get<ApiDish>('/dishes/' + id + '.json');
-    setDish(dishResponse.data);
-  }, [id]);
+  const dispatch = useAppDispatch();
+  const updateLoading = useAppSelector(selectDishUpdateLoading);
+  const fetchOneLoading = useAppSelector(selectOneDishFetchLoading);
+  const dish = useAppSelector(selectOneDish);
 
   useEffect(() => {
-    void fetchOneDish();
-  }, [fetchOneDish]);
+    dispatch(fetchDish(id));
+  }, [dispatch, id]);
 
-  const updateDish = async (dish: ApiDish) => {
-    try {
-      setUpdating(true);
-      await axiosApi.put('/dishes/' + id + '.json', dish);
-      navigate('/');
-    } finally {
-      setUpdating(false);
-    }
+  const onSubmit = async (dish: ApiDish) => {
+    await dispatch(updateDish({id, dish}));
+    navigate('/');
   }
 
   const existingDish = dish && {
@@ -37,7 +33,8 @@ const EditDish = () => {
   return (
     <div className="row mt-2">
       <div className="col">
-        {existingDish && <DishForm onSubmit={updateDish} existingDish={existingDish} isEdit isLoading={updating}/>}
+        {fetchOneLoading && <Spinner/>}
+        {existingDish && <DishForm onSubmit={onSubmit} existingDish={existingDish} isEdit isLoading={updateLoading}/>}
       </div>
     </div>
   );
